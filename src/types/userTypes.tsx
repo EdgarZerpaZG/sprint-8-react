@@ -1,5 +1,19 @@
 export interface User {
-  id: string;
+  _id?: string;
+  username: string;
+  name: string;
+  lastname: string;
   email: string;
-  username?: string;
+  location: string;
+}
+
+export interface PropsTable {
+  users: User[];
+  onEdit: (user: User) => void;
+  onDelete: (id: string) => void;
+}
+
+export interface PropsForm {
+  initialData?: User | null;
+  onSubmit: (user: User) => void;
 }
