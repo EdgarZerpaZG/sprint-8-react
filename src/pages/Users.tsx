@@ -41,16 +41,14 @@ export const UsersPage = () => {
 
           <UserForm
             initialData={editingUser}
-            onSubmit={editingUser ? handleUpdate : handleCreate}
-          />
+            onSubmit={editingUser ? handleUpdate : handleCreate}/>
 
           <hr className="my-4" />
 
           <UserTable
             users={users}
             onEdit={(user) => setEditingUser(user)}
-            onDelete={handleDelete}
-          />
+            onDelete={handleDelete}/>
         </div>
       </section>
     </main>

@@ -1,4 +1,3 @@
-// src/components/UserTable.tsx
 import React from "react";
 import type { PropsTable } from "../../types/userTypes";
 

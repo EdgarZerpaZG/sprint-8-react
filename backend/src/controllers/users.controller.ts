@@ -3,7 +3,7 @@ import { getDB } from "../db";
 import { ObjectId } from "mongodb";
 import { CreateUserDTO, User } from "../types/userTypes";
 
-// Obtener todos los usuarios
+// Get all users
 export const getUsers = async (req: Request, res: Response) => {
   try {
     const users = await getDB().collection<User>("users").find().toArray();
@@ -13,7 +13,7 @@ export const getUsers = async (req: Request, res: Response) => {
   }
 };
 
-// Obtener un usuario por ID
+// Get user by ID
 export const getUserById = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
@@ -33,12 +33,12 @@ export const getUserById = async (req: Request, res: Response) => {
   }
 };
 
-// Crear un usuario
+// Create user
 export const createUser = async (req: Request, res: Response) => {
   try {
     const data: CreateUserDTO = req.body;
 
-    // Evitar enviar _id desde el frontend
+    // Avoid sending _id from the frontend
     const { _id, ...userData } = data;
 
     const newUser: User = {
@@ -54,7 +54,7 @@ export const createUser = async (req: Request, res: Response) => {
   }
 };
 
-// Actualizar un usuario
+// Udate user
 export const updateUser = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
@@ -63,7 +63,7 @@ export const updateUser = async (req: Request, res: Response) => {
       return res.status(400).json({ message: "Invalid user ID" });
     }
 
-    // Evitar actualizar _id accidentalmente
+    // Avoid updating _id by accident
     const { _id, ...updateData } = req.body;
 
     const result = await getDB()
@@ -82,7 +82,7 @@ export const updateUser = async (req: Request, res: Response) => {
   }
 };
 
-// Eliminar un usuario
+// Delete user
 export const deleteUser = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
