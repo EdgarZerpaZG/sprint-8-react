@@ -15,3 +15,9 @@ export interface PropsForm {
   initialData?: User | null;
   onSubmit: (user: User) => void;
 }
+
+export interface UserAuth {
+  id: string;
+  email: string;
+  username?: string;
+}
