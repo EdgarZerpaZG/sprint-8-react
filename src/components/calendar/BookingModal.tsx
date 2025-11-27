@@ -16,15 +16,15 @@ export default function BookingModal({ open, onClose, start, end, resource, onSu
     setErrorMsg(null);
 
     try {
-      // Convertir a ISO en UTC
+      // Convert to ISO in UTC
       const startISO = DateTime.fromISO(start).toUTC().toISO();
       const endISO = DateTime.fromISO(end).toUTC().toISO();
 
       if (!startISO || !endISO) {
-        throw new Error("Fechas inválidas.");
+        throw new Error("Invalid dates.");
       }
 
-      // 1) Obtener el usuario autenticado
+      // 1) Get authenticated user
       const {
         data: { session },
       } = await supabase.auth.getSession();
@@ -35,7 +35,7 @@ export default function BookingModal({ open, onClose, start, end, resource, onSu
 
       const userId = session.user.id;
 
-      // 2) Validar disponibilidad mediante RPC
+      // 2) Validate availability via RPC
       const { data: available, error: rpcErr } = await supabase.rpc("is_available", {
         p_resource: resource,
         p_start: startISO,
@@ -50,10 +50,10 @@ export default function BookingModal({ open, onClose, start, end, resource, onSu
         return;
       }
 
-      // 3) Insertar reserva cumpliendo RLS
+      // 3) Insert booking complying with RLS
       const { error: insertErr } = await supabase.from("bookings").insert([
         {
-          user_id: userId, // ✔ REQUERIDO por RLS
+          user_id: userId,
           resource,
           title,
           start_time: startISO,
@@ -63,7 +63,6 @@ export default function BookingModal({ open, onClose, start, end, resource, onSu
 
       if (insertErr) throw insertErr;
 
-      // Éxito
       if (onSuccess) onSuccess();
       onClose();
 
@@ -89,8 +88,8 @@ export default function BookingModal({ open, onClose, start, end, resource, onSu
           <input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="Motivo o nombre"
-            className="w-full p-2 border rounded"
+            placeholder="Event or Title"
+            className="w-full p-2 border rounded text-black"
             required
           />
 
@@ -102,7 +101,7 @@ export default function BookingModal({ open, onClose, start, end, resource, onSu
               onClick={onClose}
               className="px-3 py-1 border rounded"
             >
-              Cancelar
+              Cancel
             </button>
 
             <button
@@ -110,7 +109,7 @@ export default function BookingModal({ open, onClose, start, end, resource, onSu
               disabled={loading}
               className="px-4 py-1 bg-blue-600 text-white rounded"
             >
-              {loading ? "Guardando..." : "Reservar"}
+              {loading ? "Saving..." : "Reserved"}
             </button>
           </div>
         </form>

@@ -20,7 +20,7 @@ export default function BookingCalendar({ resource = "default-resource" }: Props
   const events = useMemo(() => {
     return bookings.map((b) => ({
       id: b.id,
-      title: b.title || "Reserva",
+      title: b.title || "Reserve",
       start: b.start_time,
       end: b.end_time,
     }));
