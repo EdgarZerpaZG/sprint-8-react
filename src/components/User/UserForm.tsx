@@ -32,7 +32,6 @@ const UserForm: React.FC<PropsForm> = ({ initialData, onSubmit }) => {
       <h2 className="text-xl font-semibold text-gray-700">{initialData ? "Edit User" : "Create User"}</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label htmlFor="username" className="block text-gray-600 font-medium mb-1">Username</label>
           <input
             name="username"
             placeholder="Username"
@@ -41,7 +40,6 @@ const UserForm: React.FC<PropsForm> = ({ initialData, onSubmit }) => {
             className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"/>
         </div>
         <div>
-          <label htmlFor="name" className="block text-gray-600 font-medium mb-1">Name</label>
           <input
             name="name"
             placeholder="Name"
@@ -50,7 +48,6 @@ const UserForm: React.FC<PropsForm> = ({ initialData, onSubmit }) => {
             className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"/>
         </div>
         <div>
-          <label htmlFor="lastname" className="block text-gray-600 font-medium mb-1">Last Name</label>
           <input
             name="lastname"
             placeholder="Last Name"
@@ -59,7 +56,6 @@ const UserForm: React.FC<PropsForm> = ({ initialData, onSubmit }) => {
             className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"/>
         </div>
         <div>
-          <label htmlFor="email" className="block text-gray-600 font-medium mb-1">Email</label>
           <input
             name="email"
             placeholder="Email"
@@ -68,7 +64,6 @@ const UserForm: React.FC<PropsForm> = ({ initialData, onSubmit }) => {
             className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"/>
         </div>
         <div className="sm:col-span-2">
-          <label htmlFor="location" className="block text-gray-600 font-medium mb-1">Location</label>
           <input
             name="location"
             placeholder="Location"
@@ -77,11 +72,13 @@ const UserForm: React.FC<PropsForm> = ({ initialData, onSubmit }) => {
             className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"/>
         </div>
       </div>
-      <button
-        type="submit"
-        className="bg-indigo-500 text-white px-4 py-2 rounded-md hover:bg-indigo-600 transition">
-        {initialData ? "Update" : "Create"}
-      </button>
+      <div className="w-full flex justify-center">
+        <button
+          type="submit"
+          className="bg-indigo-500 text-white px-4 py-2 rounded-md hover:bg-indigo-600 transition cursor-pointer">
+          {initialData ? "Update" : "Create"}
+        </button>
+      </div>
     </form>
   );
 };

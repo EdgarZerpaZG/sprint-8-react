@@ -1,38 +1,87 @@
-# IT Academy - Sprint N°8: REACT(with Data Base)
+# IT Academy – Sprint N°8: React with Database
 
-## 🌐 Dashboard API
+## 🌐 Dashboard App
 
-This project is a **React application** focused on learning and understanding the **API connections and Data Base**. Includes user authentication and image management powered by Supabase. Also includes an User CRUD management by MongoDB.
+This project is a **React (Vite) application** focused on learning how to connect a frontend to different **databases and cloud APIs**.
+
+It includes:
+
+- A **User admin panel (CRUD)** connected to **MongoDB**.
+- A **booking calendar** powered by **FullCalendar** with data stored and validated in **Supabase**.
+- Integration with **Google Maps JavaScript API** (from Google Cloud) to display location data.
+- Several **charts with Chart.js** to visualise data from the app.
 
 ---
 
 ## ✨ Purpose
 
-The goal of this project is to:
-- Understand the use of **differents tecnologies** in React to manage data through the APP.
-- Gain hands-on experience with modern frontend development tools and DDBB environment.
-- Explore how to handle dynamic data and images within a React application.
+The main goals of this sprint are:
+
+- Understand how to use **different data sources** (MongoDB, Supabase, Google Maps API) in a React app.
+- Gain hands-on experience with a **modern frontend stack** and **real databases**.
+- Learn how to handle **dynamic data**, maps, and user sessions in a single dashboard.
+- Practice **automated testing** of components and main flows with Vitest + React Testing Library.
 
 ---
 
 ## 🧠 Key Features
 
-- Fetch and display information from the Star Wars API (starships, pilots, films, etc.)
-- User registration and login using Supabase Authentication.
-- Email verification.
-- Dynamic image storage and retrieval from Supabase Storage.
-- Search and filter functionality for exploring Star Wars data.
-- Responsive design built with TailwindCSS
+### 👤 User Management (MongoDB)
+
+- **User CRUD** (Create, Read, Update, Delete) using a Node/Express backend and **MongoDB**.
+- `UserForm` component:
+  - Used both for creating and editing a user.
+  - Controlled inputs for `username`, `name`, `lastname`, `email`, `location`.
+- `UserTable` component:
+  - Displays all users from MongoDB.
+  - Buttons to **Edit** (pre-filling the form) and **Delete** users.
+- The backend connects to MongoDB using a connection string (`MONGO_URI`) and database name (`MONGO_DB_NAME`).
+
+### 📅 Bookings Calendar (Supabase + FullCalendar)
+
+- Booking system built with **FullCalendar React component**.
+- Each booking is linked to:
+  - `user_id` (Supabase Auth user)
+  - `resource` (e.g. `consultorio-A`)
+  - `start_time` / `end_time`
+- Data storage and realtime notifications managed by **Supabase** (Postgres + Realtime). :contentReference[oaicite:1]{index=1}  
+- A PostgreSQL function `is_available` checks if a time slot is free before creating or updating a booking.
+- **Booking modal**:
+  - Create, edit and delete bookings.
+  - Shows clear error messages when the time slot is already taken or the user is not logged in.
+
+### 🗺️ Google Maps Integration (Google Cloud)
+
+- Integration with **Google Maps JavaScript API** to display maps and locations.
+- The API key is created and managed from **Google Cloud Console**, where the Maps JavaScript API is enabled for the project.
+- The key is loaded using environment variables and should be **restricted** in Google Cloud (HTTP referrers, quotas, etc).
+
+### 📊 Charts & Data Visualisation (Chart.js)
+
+- Visualisation of key metrics using **Chart.js**, integrated with React. 
+
+### 🔐 Authentication & Storage (Supabase)
+
+- User registration and login handled with **Supabase Auth**. :contentReference[oaicite:4]{index=4}  
+- Bookings are linked to the authenticated user via `user_id`.
+- Supabase Storage can be used to store and serve user images or other files. :contentReference[oaicite:5]{index=5}  
 
 ---
 
-## 🚀 Technologies Used
+## 🏗️ Technologies Used
 
 - ⚛️ **React** (Vite)
-- 💅 **Tailwind CSS** for styling  
-- 🧩 **TypeScript** 
-- 💾 **Supabase** for authentication, database, and storage.
-- 💾 **MongoDB** for User CRUD.
+- 🧩 **TypeScript**
+- 💅 **Tailwind CSS** for styling
+- 💾 **MongoDB** for User CRUD (Node/Express backend)
+- 💾 **Supabase**
+  - Auth
+  - Database (PostgreSQL)
+  - Realtime (bookings)
+  - Storage
+- 📅 **FullCalendar** + **Luxon** for calendar UI and date/time handling
+- 🗺️ **Google Maps JavaScript API** (Google Cloud)
+- 📊 **Chart.js** (and React bindings) for charts
 - 🧪 **Vitest & React Testing Library** for testing
 
 ---
@@ -58,7 +107,25 @@ npm run dev
 4. Open the localhost url:
 - Example: http://localhost:5173/
 
+
+5. Navigate to the backend directory:
+```
+sprint-8-react/ cd backend
+```
+
+6. Run in the terminal:
+```
+npm install
+npm run dev
+```
+
+7. Open the localhost url:
+- Example: http://localhost:4000/
+
 5. Additional feature with Testing(Vitest and React Testing), open the terminal and run:
 ```
-npm run test
+sprint-8-react/ npm run test
+```
+```
+backend/ npx vitest
 ```

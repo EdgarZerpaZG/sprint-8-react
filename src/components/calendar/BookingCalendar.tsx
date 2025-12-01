@@ -5,7 +5,7 @@ import interactionPlugin from "@fullcalendar/interaction";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import luxonPlugin from "@fullcalendar/luxon";
 import { DateTime } from "luxon";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import BookingModal from "./BookingModal";
 import { useBookings } from "../../hooks/useBooking";
 
@@ -19,7 +19,9 @@ export default function BookingCalendar({
   resource = "default-resource",
 }: Props) {
   const { bookings, loading, error, refetch } = useBookings(resource);
+
   const [selectInfo, setSelectInfo] = useState<SelectedRange>(null);
+
   const [editingEvent, setEditingEvent] = useState<{
     id: string;
     title: string;
@@ -38,13 +40,14 @@ export default function BookingCalendar({
     [bookings]
   );
 
-  const handleSelect = (info: DateSelectArg) => {
+  // Handler when the user chooses a time slot
+  const handleSelect = useCallback((info: DateSelectArg) => {
     const startISO = DateTime.fromJSDate(info.start).toISO() ?? "";
     const endISO = DateTime.fromJSDate(info.end).toISO() ?? "";
     setSelectInfo({ startStr: startISO, endStr: endISO });
-  };
+  }, []);
 
-  const handleEventClick = (clickInfo: EventClickArg) => {
+  const handleEventClick = useCallback((clickInfo: EventClickArg) => {
     const { event } = clickInfo;
 
     setEditingEvent({
@@ -53,18 +56,34 @@ export default function BookingCalendar({
       start: event.start ? DateTime.fromJSDate(event.start).toISO() ?? "" : "",
       end: event.end ? DateTime.fromJSDate(event.end).toISO() ?? "" : "",
     });
-  };
+  }, []);
 
-  const handleSuccess = () => {
+  const handleSuccess = useCallback(() => {
     setSelectInfo(null);
     setEditingEvent(null);
-    // opcional, porque ya tienes realtime, pero viene bien por si acaso
     refetch();
-  };
+  }, [refetch]);
+
+  if (loading) {
+    return (
+      <div className="w-full flex justify-center py-8">
+        <p className="text-gray-500">Cargando reservas...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="w-full flex justify-center py-8">
+        <p className="text-red-600">
+          Error al cargar las reservas. Intenta recargar la página.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <>
-      {/* Si quieres, aquí puedes mostrar loading/error */}
       <FullCalendar
         plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin, luxonPlugin]}
         initialView="timeGridWeek"
@@ -82,11 +101,10 @@ export default function BookingCalendar({
         allDaySlot={false}
         timeZone="local"
         height="auto"
-        editable={false} // si luego quieres drag&drop, aquí iría true + lógica extra
+        editable={false}
         eventClick={handleEventClick}
       />
 
-      {/* Modal para CREAR reserva */}
       {selectInfo && (
         <BookingModal
           mode="create"
@@ -99,7 +117,6 @@ export default function BookingCalendar({
         />
       )}
 
-      {/* Modal para EDITAR / ELIMINAR reserva */}
       {editingEvent && (
         <BookingModal
           mode="edit"

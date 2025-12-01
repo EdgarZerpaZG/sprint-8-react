@@ -24,8 +24,8 @@ const UserTable: React.FC<PropsTable> = ({ users, onEdit, onDelete }) => {
             <td className="py-2 px-4">{user.email}</td>
             <td className="py-2 px-4">{user.location}</td>
             <td className="py-2 px-4">
-              <button onClick={() => onEdit(user)} className="bg-yellow-400 text-white px-3 py-1 rounded hover:bg-yellow-500">Editar</button>
-              <button onClick={() => user._id && onDelete(user._id)} className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">Eliminar</button>
+              <button onClick={() => onEdit(user)} className="bg-yellow-400 text-white px-3 py-1 rounded hover:bg-yellow-500 w-full mb-3 cursor-pointer">Edit</button>
+              <button onClick={() => user._id && onDelete(user._id)} className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 w-full cursor-pointer">Delete</button>
             </td>
           </tr>
         ))}

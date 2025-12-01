@@ -28,18 +28,15 @@ describe("BookingModal", () => {
   });
 
   it("should save a booking when form is submitted", async () => {
-    // Usuario autenticado
     (supabase.auth.getSession as any).mockResolvedValue({
       data: { session: { user: { id: "mock-user-id" } } },
     });
 
-    // RPC dice que hay disponibilidad
     (supabase.rpc as any).mockResolvedValue({
       data: true,
       error: null,
     });
 
-    // Mock de insert + select encadenado
     const mockSelectFn = vi.fn().mockResolvedValue({ data: [], error: null });
     const mockInsertFn = vi.fn().mockReturnValue({ select: mockSelectFn });
 
@@ -68,7 +65,6 @@ describe("BookingModal", () => {
       data: { session: { user: { id: "mock-user-id" } } },
     });
 
-    // RPC dice que NO hay disponibilidad
     (supabase.rpc as any).mockResolvedValue({
       data: false,
       error: null,
@@ -87,7 +83,6 @@ describe("BookingModal", () => {
   });
 
   it("should show an error if user is not logged in", async () => {
-    // Sin sesión
     (supabase.auth.getSession as any).mockResolvedValue({
       data: { session: null },
     });
@@ -105,18 +100,15 @@ describe("BookingModal", () => {
   });
 
   it("should update a booking when in edit mode", async () => {
-    // Usuario autenticado
     (supabase.auth.getSession as any).mockResolvedValue({
       data: { session: { user: { id: "mock-user-id" } } },
     });
 
-    // RPC dice que hay disponibilidad
     (supabase.rpc as any).mockResolvedValue({
       data: true,
       error: null,
     });
 
-    // Mock de update + eq + select encadenado
     const mockSelectFn = vi.fn().mockResolvedValue({
       data: [{ id: "booking-1" }],
       error: null,
@@ -147,12 +139,10 @@ describe("BookingModal", () => {
       />
     );
 
-    // Cambiar título
     fireEvent.change(screen.getByPlaceholderText("Event or Title"), {
       target: { value: "Updated Meeting" },
     });
 
-    // Guardar cambios
     fireEvent.click(screen.getByRole("button", { name: /save changes/i }));
 
     await waitFor(() => {
@@ -165,13 +155,11 @@ describe("BookingModal", () => {
   });
 
   it("should delete a booking when delete button is clicked", async () => {
-    // Confirmación del navegador
     const confirmSpy = vi.spyOn(window, "confirm").mockReturnValue(true);
 
     const onClose = vi.fn();
     const onSuccess = vi.fn();
 
-    // Mock de delete + eq encadenado (promise en el then)
     const mockEqFn = vi.fn().mockReturnThis();
 
     const deleteQuery = {
@@ -196,7 +184,6 @@ describe("BookingModal", () => {
       />
     );
 
-    // Click en "Delete booking"
     fireEvent.click(
       screen.getByRole("button", { name: /delete booking/i })
     );
