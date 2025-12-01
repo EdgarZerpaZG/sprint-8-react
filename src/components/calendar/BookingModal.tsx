@@ -1,217 +1,93 @@
-// BookingModal.tsx
-import { useState } from "react";
-import { DateTime } from "luxon";
-import { supabase } from "../../lib/supabaseClient";
+import { useBookingModal } from "../../hooks/useBookingModal";
 import type { BookingModalProps } from "../../types/bookingTypes";
 
-export default function BookingModal({
-  open,
-  onClose,
-  start,
-  end,
-  resource,
-  onSuccess,
-  mode = "create",
-  bookingId,
-  initialTitle = "",
-}: BookingModalProps) {
-  const [title, setTitle] = useState(initialTitle);
-  const [loading, setLoading] = useState(false);
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+export default function BookingModal(props: BookingModalProps) {
+  const {
+    open,
+    onClose,
+    start,
+    end,
+    resource,
+    onSuccess,
+    mode = "create",
+    bookingId,
+    initialTitle = "",
+  } = props;
+
+  const {
+    title,
+    setTitle,
+    loading,
+    errorMsg,
+    formattedRange,
+    handleSubmit,
+    handleDelete,
+  } = useBookingModal({
+    start,
+    end,
+    resource,
+    mode,
+    bookingId,
+    initialTitle,
+    onSuccess,
+    onClose,
+  });
 
   if (!open) return null;
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setErrorMsg(null);
-
-    try {
-      const startISO = DateTime.fromISO(start).toUTC().toISO();
-      const endISO = DateTime.fromISO(end).toUTC().toISO();
-
-      console.log("SUBMIT booking", {
-        mode,
-        bookingId,
-        resource,
-        start,
-        end,
-        startISO,
-        endISO,
-        title,
-      });
-
-      if (!startISO || !endISO) {
-        throw new Error("Fechas inválidas.");
-      }
-
-      // 1) User authenticated
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-
-      if (!session || !session.user) {
-        throw new Error("Debes iniciar sesión para gestionar reservas.");
-      }
-
-      const userId = session.user.id;
-
-      // 2) Validate availability via RPC
-      const { data: available, error: rpcErr } = await supabase.rpc(
-        "is_available",
-        {
-          p_resource: resource,
-          p_start: startISO,
-          p_end: endISO,
-          p_booking_id: mode === "edit" ? bookingId : null,
-        }
-      );
-
-      console.log("RPC is_available =>", { available, rpcErr });
-
-      if (rpcErr) throw rpcErr;
-
-      if (!available) {
-        setErrorMsg("El horario seleccionado ya está ocupado. Elige otro.");
-        setLoading(false);
-        return;
-      }
-
-      if (mode === "create") {
-        // 3A) Insert
-        const { data: insertedRows, error: insertErr } = await supabase
-          .from("bookings")
-          .insert([
-            {
-              user_id: userId,
-              resource,
-              title,
-              start_time: startISO,
-              end_time: endISO,
-            },
-          ])
-          .select();
-
-        console.log("INSERT result =>", { insertedRows, insertErr });
-
-        if (insertErr) throw insertErr;
-      } else {
-        // 3B) Update
-        if (!bookingId) {
-          throw new Error("Falta el ID de la reserva para poder editar.");
-        }
-
-        const { data: updatedRows, error: updateErr } = await supabase
-          .from("bookings")
-          .update({
-            title,
-            start_time: startISO,
-            end_time: endISO,
-          })
-          .eq("id", bookingId)
-          // .eq("resource", resource)
-          .select();
-
-        console.log("UPDATE result =>", { updatedRows, updateErr });
-
-        if (updateErr) throw updateErr;
-
-        if (!updatedRows || updatedRows.length === 0) {
-          console.warn("⚠ UPDATE did not affect any rows. Check id/resource.");
-        }
-      }
-
-      onSuccess?.();
-      onClose();
-    } catch (err: any) {
-      console.error("Error saving booking:", err);
-      setErrorMsg(err.message ?? "Error saving booking.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleDelete = async () => {
-    if (!bookingId) return;
-
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this booking?"
-    );
-    if (!confirmDelete) return;
-
-    setLoading(true);
-    setErrorMsg(null);
-
-    try {
-      const { error: deleteErr } = await supabase
-        .from("bookings")
-        .delete()
-        .eq("id", bookingId)
-        .eq("resource", resource);
-
-      if (deleteErr) throw deleteErr;
-
-      onSuccess?.();
-      onClose();
-    } catch (err: any) {
-      console.error("Error deleting booking:", err);
-      setErrorMsg(err.message ?? "Error deleting booking.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const formattedRange = `${DateTime.fromISO(start).toLocaleString(
-    DateTime.DATETIME_FULL
-  )} → ${DateTime.fromISO(end).toLocaleString(DateTime.DATETIME_FULL)}`;
-
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-      <div className="bg-white rounded p-6 w-full max-w-md">
-        <h3 className="text-xl font-bold mb-2">
-          {mode === "create" ? "Confirmar reserva" : "Editar reserva"}
+      <div className="bg-white rounded-2xl p-6 w-full max-w-md shadow-xl">
+        <h3 className="text-xl font-semibold mb-1 text-gray-900">
+          {mode === "create" ? "Confirm booking" : "Edit booking"}
         </h3>
 
-        <p className="text-sm text-gray-600 mb-4">{formattedRange}</p>
+        <p className="text-sm text-gray-500 mb-4">{formattedRange}</p>
 
-        <form onSubmit={handleSubmit} className="space-y-3">
-          <input
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="Event or Title"
-            className="w-full p-2 border rounded text-black"
-            required
-          />
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Booking title
+            </label>
+            <input
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="e.g. First consultation, Follow-up session..."
+              className="w-full p-2.5 border border-gray-300 rounded-lg text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              required/>
+          </div>
 
-          {errorMsg && <p className="text-red-600 text-sm">{errorMsg}</p>}
+          {errorMsg && (
+            <p className="text-xs text-red-600 bg-red-50 border border-red-100 rounded-md px-3 py-2">
+              {errorMsg}
+            </p>
+          )}
 
-          <div className="flex justify-between items-center gap-2 mt-4">
+          <div className="pt-4 border-t border-gray-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             {mode === "edit" && (
               <button
                 type="button"
                 onClick={handleDelete}
-                className="px-3 py-1 border border-red-500 text-red-600 rounded text-sm"
-                disabled={loading}
-              >
+                className="inline-flex items-center justify-center px-3 py-2 text-xs font-medium rounded-lg border border-red-200 text-red-600 hover:bg-red-50 transition-colors disabled:opacity-60"
+                disabled={loading}>
+                <span className="mr-1.5 text-sm">🗑️</span>
                 Delete booking
               </button>
             )}
 
-            <div className="flex justify-end gap-2 flex-1">
+            <div className="flex flex-1 sm:justify-end gap-2">
               <button
                 type="button"
                 onClick={onClose}
-                className="px-3 py-1 border rounded"
-                disabled={loading}
-              >
+                className="inline-flex justify-center px-4 py-2 text-sm font-medium rounded-lg border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 transition-colors disabled:opacity-60"
+                disabled={loading}>
                 Cancel
               </button>
 
               <button
                 type="submit"
                 disabled={loading}
-                className="px-4 py-1 bg-blue-600 text-white rounded"
-              >
+                className="inline-flex justify-center px-4 py-2 text-sm font-semibold rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors disabled:opacity-60">
                 {loading
                   ? "Saving..."
                   : mode === "create"

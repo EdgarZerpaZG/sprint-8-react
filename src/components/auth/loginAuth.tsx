@@ -1,61 +1,15 @@
-import { useState } from "react";
-import { supabase } from "../../lib/supabaseClient";
 import { Link } from "react-router-dom";
-import { GoHome } from './../../utils/gohome';
+import { GoHome } from "../../utils/gohome";
+import { useLoginForm } from "../../hooks/useLoginForm";
 
 export default function LoginForm() {
   const path = "/";
   const home = GoHome(path);
 
-  const [formData, setFormData] = useState({ email: "", password: "" });
-  const [message, setMessage] = useState("");
-  const [loading, setLoading] = useState(false);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setMessage("");
-    setLoading(true);
-
-    const { email, password } = formData;
-
-    if (!email || !password) {
-      setMessage("Please fill in all fields.");
-      setLoading(false);
-      return;
-    }
-
-    try {
-      const { data: sessionData, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (error) {
-        setMessage("Invalid email or password.");
-        setLoading(false);
-        return;
-      }
-
-      const user = sessionData?.user;
-      if (user) {
-        localStorage.setItem("user", JSON.stringify(user));
-      }
-
-      setMessage("Login successful!");
-      setLoading(false);
-
-      setTimeout(() => home, 3000);
-
-    } catch (err) {
-      console.error(err);
-      setMessage("Error logging in. Please try again.");
-      setLoading(false);
-    }
-  };
+  const { formData, message, loading, handleChange, handleSubmit } =
+    useLoginForm(() => {
+      setTimeout(home, 3000);
+    });
 
   return (
     <form onSubmit={handleSubmit}>
@@ -74,8 +28,7 @@ export default function LoginForm() {
                   value={formData.email}
                   onChange={handleChange}
                   autoComplete="email"
-                  className="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
-                />
+                  className="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"/>
               </div>
             </div>
             <div className="sm:col-span-5">
@@ -89,8 +42,7 @@ export default function LoginForm() {
                   name="password"
                   value={formData.password}
                   onChange={handleChange}
-                  className="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
-                />
+                  className="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"/>
               </div>
             </div>
           </div>

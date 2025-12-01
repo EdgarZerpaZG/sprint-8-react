@@ -127,5 +127,5 @@ npm run dev
 sprint-8-react/ npm run test
 ```
 ```
-backend/ npx vitest
+backend/ npm run test
 ```
