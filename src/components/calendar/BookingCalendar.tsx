@@ -1,5 +1,5 @@
 import FullCalendar from "@fullcalendar/react";
-import type { DateSelectArg } from "@fullcalendar/core";
+import type { DateSelectArg, EventClickArg } from "@fullcalendar/core";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import dayGridPlugin from "@fullcalendar/daygrid";
@@ -13,28 +13,58 @@ type Props = {
   resource?: string;
 };
 
-export default function BookingCalendar({ resource = "default-resource" }: Props) {
-  const { bookings } = useBookings(resource);
-  const [selectInfo, setSelectInfo] = useState<{ startStr: string; endStr: string } | null>(null);
+type SelectedRange = { startStr: string; endStr: string } | null;
 
-  const events = useMemo(() => {
-    return bookings.map((b) => ({
-      id: b.id,
-      title: b.title || "Reserve",
-      start: b.start_time,
-      end: b.end_time,
-    }));
-  }, [bookings]);
+export default function BookingCalendar({
+  resource = "default-resource",
+}: Props) {
+  const { bookings, loading, error, refetch } = useBookings(resource);
+  const [selectInfo, setSelectInfo] = useState<SelectedRange>(null);
+  const [editingEvent, setEditingEvent] = useState<{
+    id: string;
+    title: string;
+    start: string;
+    end: string;
+  } | null>(null);
 
-  const handleSelect = (selectInfo: DateSelectArg) => {
-    // FullCalendar give start/end as Date | string; convert to ISO local strings via Luxon
-    const startISO = DateTime.fromJSDate(selectInfo.start).toISO() ?? "";
-    const endISO = DateTime.fromJSDate(selectInfo.end).toISO() ?? "";
+  const events = useMemo(
+    () =>
+      bookings.map((b) => ({
+        id: b.id,
+        title: b.title || "Reserve",
+        start: b.start_time,
+        end: b.end_time,
+      })),
+    [bookings]
+  );
+
+  const handleSelect = (info: DateSelectArg) => {
+    const startISO = DateTime.fromJSDate(info.start).toISO() ?? "";
+    const endISO = DateTime.fromJSDate(info.end).toISO() ?? "";
     setSelectInfo({ startStr: startISO, endStr: endISO });
+  };
+
+  const handleEventClick = (clickInfo: EventClickArg) => {
+    const { event } = clickInfo;
+
+    setEditingEvent({
+      id: event.id,
+      title: event.title,
+      start: event.start ? DateTime.fromJSDate(event.start).toISO() ?? "" : "",
+      end: event.end ? DateTime.fromJSDate(event.end).toISO() ?? "" : "",
+    });
+  };
+
+  const handleSuccess = () => {
+    setSelectInfo(null);
+    setEditingEvent(null);
+    // opcional, porque ya tienes realtime, pero viene bien por si acaso
+    refetch();
   };
 
   return (
     <>
+      {/* Si quieres, aquí puedes mostrar loading/error */}
       <FullCalendar
         plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin, luxonPlugin]}
         initialView="timeGridWeek"
@@ -52,16 +82,35 @@ export default function BookingCalendar({ resource = "default-resource" }: Props
         allDaySlot={false}
         timeZone="local"
         height="auto"
+        editable={false} // si luego quieres drag&drop, aquí iría true + lógica extra
+        eventClick={handleEventClick}
       />
 
+      {/* Modal para CREAR reserva */}
       {selectInfo && (
         <BookingModal
+          mode="create"
           open={true}
           onClose={() => setSelectInfo(null)}
           start={selectInfo.startStr}
           end={selectInfo.endStr}
           resource={resource}
-          onSuccess={() => setSelectInfo(null)}
+          onSuccess={handleSuccess}
+        />
+      )}
+
+      {/* Modal para EDITAR / ELIMINAR reserva */}
+      {editingEvent && (
+        <BookingModal
+          mode="edit"
+          open={true}
+          onClose={() => setEditingEvent(null)}
+          start={editingEvent.start}
+          end={editingEvent.end}
+          resource={resource}
+          onSuccess={handleSuccess}
+          bookingId={editingEvent.id}
+          initialTitle={editingEvent.title}
         />
       )}
     </>

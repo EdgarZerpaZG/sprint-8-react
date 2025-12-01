@@ -3,17 +3,31 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const client = new MongoClient(process.env.MONGO_URI as string);
+const uri = process.env.MONGO_URI;
+const dbName = process.env.MONGO_DB_NAME;
+
+if (!uri) {
+  throw new Error(
+    "MONGO_URI is not defined. Check your .env file or environment variables."
+  );
+}
+
+if (!dbName) {
+  throw new Error(
+    "MONGO_DB_NAME is not defined. Check your .env file or environment variables."
+  );
+}
+
+export const client = new MongoClient(uri);
 let db: Db;
 
 export async function connectDB() {
-  try {
-    await client.connect();
-    db = client.db(process.env.MONGO_DB_NAME);
-    console.log("✔ MongoDB connected");
-  } catch (error) {
-    console.error("❌ Error connecting to MongoDB:", error);
-  }
+  if (db) return db;
+
+  await client.connect();
+  db = client.db(dbName);
+  console.log("✔ MongoDB connected");
+  return db;
 }
 
 export function getDB() {

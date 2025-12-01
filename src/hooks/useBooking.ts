@@ -11,13 +11,23 @@ export function useBookings(resource?: string) {
   const fetchBookings = useCallback(async () => {
     try {
       setLoading(true);
+      setError(null);
+
       let query = supabase.from("bookings").select("*");
-      if (resource) query = query.eq("resource", resource);
-      const { data, error } = await query.order("start_time", { ascending: true });
+
+      if (resource) {
+        query = query.eq("resource", resource);
+      }
+
+      const { data, error } = await query.order("start_time", {
+        ascending: true,
+      });
+
       if (error) throw error;
+
       setBookings(data ?? []);
     } catch (err: any) {
-      setError(err);
+      setError(err as PostgrestError);
     } finally {
       setLoading(false);
     }
@@ -25,20 +35,44 @@ export function useBookings(resource?: string) {
 
   useEffect(() => {
     fetchBookings();
+    
     const channel = supabase
-      .channel("public:bookings")
+      .channel(`public:bookings:${resource ?? "all"}`)
       .on(
         "postgres_changes",
-        { event: "*", schema: "public", table: "bookings" },
+        {
+          event: "*",
+          schema: "public",
+          table: "bookings",
+        },
         (payload) => {
-          // payload: { eventType: 'INSERT' | 'UPDATE' | 'DELETE', ...}
           const ev = payload.eventType;
           const newRow = payload.new as Booking | null;
           const oldRow = payload.old as Booking | null;
+
+          const matchesResource = (row: Booking | null) =>
+            !resource || (row && row.resource === resource);
+
           setBookings((prev) => {
-            if (ev === "INSERT" && newRow) return [...prev, newRow].sort((a,b)=> a.start_time.localeCompare(b.start_time));
-            if (ev === "UPDATE" && newRow) return prev.map(p => p.id === newRow.id ? newRow : p).sort((a,b)=> a.start_time.localeCompare(b.start_time));
-            if (ev === "DELETE" && oldRow) return prev.filter(p => p.id !== oldRow.id);
+            const sortByStart = (list: Booking[]) =>
+              [...list].sort((a, b) =>
+                a.start_time.localeCompare(b.start_time)
+              );
+
+            if (ev === "INSERT" && newRow && matchesResource(newRow)) {
+              return sortByStart([...prev, newRow]);
+            }
+
+            if (ev === "UPDATE" && newRow && matchesResource(newRow)) {
+              return sortByStart(
+                prev.map((b) => (b.id === newRow.id ? newRow : b))
+              );
+            }
+
+            if (ev === "DELETE" && oldRow && matchesResource(oldRow)) {
+              return prev.filter((b) => b.id !== oldRow.id);
+            }
+
             return prev;
           });
         }
@@ -48,7 +82,12 @@ export function useBookings(resource?: string) {
     return () => {
       channel.unsubscribe();
     };
-  }, [fetchBookings]);
+  }, [fetchBookings, resource]);
 
-  return { bookings, loading, error, refetch: fetchBookings };
+  return {
+    bookings,
+    loading,
+    error,
+    refetch: fetchBookings,
+  };
 }
