@@ -10,12 +10,23 @@ export default function RegisterForm() {
       setTimeout(home, 3000);
     });
 
-  const { username, email, password, confirmPassword } = formData;
+  const {
+    username,
+    name,
+    lastname,
+    email,
+    phone,
+    location,
+    hobby,
+    password,
+    confirmPassword,
+  } = formData;
 
   return (
     <>
       <form onSubmit={handleRegister}>
         <div className="space-y-12">
+          {/* PROFILE */}
           <div className="border-b border-white/10 pb-12">
             <h2 className="text-base/7 font-semibold text-white">Profile</h2>
             <p className="mt-1 text-sm/6 text-gray-400">
@@ -27,7 +38,8 @@ export default function RegisterForm() {
               <div className="sm:col-span-4">
                 <label
                   htmlFor="username"
-                  className="block text-sm/6 font-medium text-white">
+                  className="block text-sm/6 font-medium text-white"
+                >
                   Username
                 </label>
                 <div className="mt-2">
@@ -47,9 +59,48 @@ export default function RegisterForm() {
                   </div>
                 </div>
               </div>
+
+              <div className="sm:col-span-3">
+                <label
+                  htmlFor="name"
+                  className="block text-sm/6 font-medium text-white"
+                >
+                  Name
+                </label>
+                <div className="mt-2">
+                  <input
+                    id="name"
+                    type="text"
+                    name="name"
+                    value={name}
+                    onChange={handleChange}
+                    className="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 outline-white/10 focus:outline-2 focus:outline-indigo-500 sm:text-sm/6"
+                  />
+                </div>
+              </div>
+
+              <div className="sm:col-span-3">
+                <label
+                  htmlFor="lastname"
+                  className="block text-sm/6 font-medium text-white"
+                >
+                  Lastname
+                </label>
+                <div className="mt-2">
+                  <input
+                    id="lastname"
+                    type="text"
+                    name="lastname"
+                    value={lastname}
+                    onChange={handleChange}
+                    className="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 outline-white/10 focus:outline-2 focus:outline-indigo-500 sm:text-sm/6"
+                  />
+                </div>
+              </div>
             </div>
           </div>
 
+          {/* PERSONAL INFO */}
           <div className="border-b border-white/10 pb-12">
             <h2 className="text-base/7 font-semibold text-white">
               Personal Information
@@ -59,10 +110,11 @@ export default function RegisterForm() {
             </p>
 
             <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-              <div className="sm:col-span-7">
+              <div className="sm:col-span-6">
                 <label
                   htmlFor="email"
-                  className="block text-sm/6 font-medium text-white">
+                  className="block text-sm/6 font-medium text-white"
+                >
                   Email address
                 </label>
                 <div className="mt-2">
@@ -73,14 +125,76 @@ export default function RegisterForm() {
                     autoComplete="email"
                     value={email}
                     onChange={handleChange}
-                    className="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 outline-white/10 focus:outline-2 focus:outline-indigo-500 sm:text-sm/6"/>
+                    className="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 outline-white/10 focus:outline-2 focus:outline-indigo-500 sm:text-sm/6"
+                  />
+                </div>
+              </div>
+
+              <div className="sm:col-span-3">
+                <label
+                  htmlFor="phone"
+                  className="block text-sm/6 font-medium text-white"
+                >
+                  Phone
+                </label>
+                <div className="mt-2">
+                  <input
+                    id="phone"
+                    type="tel"
+                    name="phone"
+                    value={phone}
+                    onChange={handleChange}
+                    placeholder="3001234567"
+                    className="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 outline-white/10 focus:outline-2 focus:outline-indigo-500 sm:text-sm/6"
+                  />
+                </div>
+              </div>
+
+              <div className="sm:col-span-3">
+                <label
+                  htmlFor="location"
+                  className="block text-sm/6 font-medium text-white"
+                >
+                  Location
+                </label>
+                <div className="mt-2">
+                  <input
+                    id="location"
+                    type="text"
+                    name="location"
+                    value={location}
+                    onChange={handleChange}
+                    placeholder="Barcelona"
+                    className="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 outline-white/10 focus:outline-2 focus:outline-indigo-500 sm:text-sm/6"
+                  />
+                </div>
+              </div>
+
+              <div className="sm:col-span-6">
+                <label
+                  htmlFor="hobby"
+                  className="block text-sm/6 font-medium text-white"
+                >
+                  Hobby
+                </label>
+                <div className="mt-2">
+                  <input
+                    id="hobby"
+                    type="text"
+                    name="hobby"
+                    value={hobby}
+                    onChange={handleChange}
+                    placeholder="Gaming, gym, reading..."
+                    className="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 outline-white/10 focus:outline-2 focus:outline-indigo-500 sm:text-sm/6"
+                  />
                 </div>
               </div>
 
               <div className="sm:col-span-3">
                 <label
                   htmlFor="password"
-                  className="block text-sm/6 font-medium text-white">
+                  className="block text-sm/6 font-medium text-white"
+                >
                   Password
                 </label>
                 <div className="mt-2">
@@ -91,14 +205,16 @@ export default function RegisterForm() {
                     autoComplete="new-password"
                     value={password}
                     onChange={handleChange}
-                    className="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 outline-white/10 focus:outline-2 focus:outline-indigo-500 sm:text-sm/6"/>
+                    className="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 outline-white/10 focus:outline-2 focus:outline-indigo-500 sm:text-sm/6"
+                  />
                 </div>
               </div>
 
               <div className="sm:col-span-3">
                 <label
                   htmlFor="confirmPassword"
-                  className="block text-sm/6 font-medium text-white">
+                  className="block text-sm/6 font-medium text-white"
+                >
                   Confirm password
                 </label>
                 <div className="mt-2">
@@ -108,7 +224,8 @@ export default function RegisterForm() {
                     name="confirmPassword"
                     value={confirmPassword}
                     onChange={handleChange}
-                    className="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 outline-white/10 focus:outline-2 focus:outline-indigo-500 sm:text-sm/6"/>
+                    className="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 outline-white/10 focus:outline-2 focus:outline-indigo-500 sm:text-sm/6"
+                  />
                 </div>
               </div>
             </div>
@@ -119,13 +236,15 @@ export default function RegisterForm() {
           <button
             type="button"
             onClick={home}
-            className="text-sm/6 font-semibold text-white hover:text-gray-500 cursor-pointer">
+            className="text-sm/6 font-semibold text-white hover:text-gray-500 cursor-pointer"
+          >
             Cancel
           </button>
           <button
             type="submit"
             disabled={loading}
-            className="rounded-md bg-indigo-500 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-600 cursor-pointer disabled:opacity-50">
+            className="rounded-md bg-indigo-500 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-600 cursor-pointer disabled:opacity-50"
+          >
             {loading ? "Registering..." : "Register"}
           </button>
         </div>

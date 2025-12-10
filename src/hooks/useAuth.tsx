@@ -1,8 +1,8 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import type { ReactNode } from "react";
 import { supabase } from "./../lib/supabaseClient";
-import type { UserAuth } from './../types/userTypes';
-import type { AuthContextType } from './../types/authTypes';
+import type { UserProfile } from "./../types/usersTypes";
+import type { AuthContextType } from "./../types/authTypes";
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
@@ -10,33 +10,92 @@ const AuthContext = createContext<AuthContextType>({
   logout: async () => {},
 });
 
+function mapFromSession(sessionUser: any): UserProfile {
+  const { id, email } = sessionUser;
+  const md = sessionUser.user_metadata ?? {};
+
+  return {
+    id,
+    email: email ?? "",
+    username: md.username ?? "",
+    name: md.name ?? "",
+    lastname: md.lastname ?? "",
+    phone: md.phone ?? "",
+    location: md.location ?? "",
+    hobby: md.hobby ?? "",
+    created_at: undefined,
+    is_active: undefined,
+  };
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<UserAuth | null>(null);
+  const [user, setUser] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    async function getSession() {
-      const { data } = await supabase.auth.getSession();
-      if (data?.session?.user) {
-        const { id, email } = data.session.user;
-        const username = data.session.user.user_metadata?.username;
-        setUser({ id, email: email ?? "", username: username ?? "" });
-      }
-      setLoading(false);
+  const hydrateFromTable = async (uid: string) => {
+    const { data, error } = await supabase
+      .from("users")
+      .select("id, username, name, lastname, email, phone, location, hobby, created_at, is_active")
+      .eq("id", uid)
+      .maybeSingle();
+
+    if (error) {
+      // No bloquees nada por esto
+      console.warn("Hydrate profile error:", error.message);
+      return;
     }
+
+    if (data) {
+      setUser((prev) => ({
+        ...(prev ?? { id: uid } as any),
+        ...data,
+      }));
+    }
+  };
+
+  useEffect(() => {
+    let alive = true;
+
+    async function getSession() {
+      try {
+        const { data } = await supabase.auth.getSession();
+        const sessionUser = data?.session?.user;
+
+        if (sessionUser && alive) {
+          // 1) Set inmediato desde metadata
+          const base = mapFromSession(sessionUser);
+          setUser(base);
+
+          // 2) Hidratación sin bloquear
+          hydrateFromTable(sessionUser.id);
+        } else if (alive) {
+          setUser(null);
+        }
+      } finally {
+        if (alive) setLoading(false);
+      }
+    }
+
     getSession();
 
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session?.user) {
-        const { id, email } = session.user;
-        const username = session.user.user_metadata?.username;
-        setUser({ id, email: email ?? "", username: username ?? "" });
-      } else {
-        setUser(null);
+    const { data: listener } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        const sessionUser = session?.user;
+
+        if (sessionUser) {
+          // 1) Set inmediato
+          setUser(mapFromSession(sessionUser));
+
+          // 2) Hidratación async
+          hydrateFromTable(sessionUser.id);
+        } else {
+          setUser(null);
+        }
       }
-    });
+    );
 
     return () => {
+      alive = false;
       listener.subscription.unsubscribe();
     };
   }, []);
