@@ -11,6 +11,7 @@ type UseBookingModalParams = {
   initialTitle?: string;
   onSuccess?: () => void;
   onClose?: () => void;
+  profileId?: string | null;
 };
 
 export function useBookingModal({
@@ -22,6 +23,7 @@ export function useBookingModal({
   initialTitle = "",
   onSuccess,
   onClose,
+  profileId
 }: UseBookingModalParams) {
   const [title, setTitle] = useState(initialTitle);
   const [loading, setLoading] = useState(false);
@@ -106,6 +108,7 @@ export function useBookingModal({
           .insert([
             {
               user_id: userId,
+              profile_id: profileId ?? null,
               resource,
               title,
               start_time: startISO,
@@ -129,6 +132,7 @@ export function useBookingModal({
             title,
             start_time: startISO,
             end_time: endISO,
+            profile_id: profileId ?? null,
           })
           .eq("id", bookingId)
           .select();

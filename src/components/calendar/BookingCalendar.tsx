@@ -76,6 +76,7 @@ export default function BookingCalendar({
           end={selectInfo.endStr}
           resource={resource}
           onSuccess={handleSuccess}
+          profileId={null}
         />
       )}
 
@@ -90,6 +91,7 @@ export default function BookingCalendar({
           onSuccess={handleSuccess}
           bookingId={editingEvent.id}
           initialTitle={editingEvent.title}
+          profileId={editingEvent.profileId ?? null}
         />
       )}
     </>

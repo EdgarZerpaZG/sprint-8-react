@@ -10,6 +10,7 @@ type EditingEvent = {
   title: string;
   start: string;
   end: string;
+  profileId?: string | null;
 } | null;
 
 export function useBookingCalendar(resource: string) {
@@ -25,6 +26,9 @@ export function useBookingCalendar(resource: string) {
         title: b.title || "Reserve",
         start: b.start_time,
         end: b.end_time,
+        extendedProps: {
+          profileId: b.profile_id ?? null,
+        },
       })),
     [bookings]
   );
@@ -43,6 +47,7 @@ export function useBookingCalendar(resource: string) {
       title: event.title,
       start: event.start ? DateTime.fromJSDate(event.start).toISO() ?? "" : "",
       end: event.end ? DateTime.fromJSDate(event.end).toISO() ?? "" : "",
+      profileId: (event.extendedProps as any)?.profileId ?? null,
     });
   }, []);
 
