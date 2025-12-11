@@ -24,6 +24,9 @@ export default function BookingCalendar({
     handleSuccess,
     closeCreateModal,
     closeEditModal,
+    handleEventChange,
+    eventAllow,
+    eventClassNames,
   } = useBookingCalendar(resource);
 
   if (loading) {
@@ -63,9 +66,21 @@ export default function BookingCalendar({
         allDaySlot={false}
         timeZone="local"
         height="auto"
-        editable={false}
+
+        editable={true}
+        eventStartEditable={true}
+        eventDurationEditable={true}
+        eventResizableFromStart={true}
+
+        eventDrop={handleEventChange}
+        eventResize={handleEventChange}
+
+        eventAllow={eventAllow}
+        eventClassNames={eventClassNames}
+
         eventClick={handleEventClick}
       />
+
 
       {selectInfo && (
         <BookingModal

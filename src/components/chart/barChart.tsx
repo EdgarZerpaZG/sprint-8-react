@@ -7,9 +7,8 @@ import {
   Title,
   Tooltip,
   Legend,
-} from 'chart.js';
-import { Line } from 'react-chartjs-2';
-import { faker } from '@faker-js/faker';
+} from "chart.js";
+import { Line } from "react-chartjs-2";
 
 ChartJS.register(
   CategoryScale,
@@ -21,39 +20,37 @@ ChartJS.register(
   Legend
 );
 
-export const options = {
+type BarChartProps = {
+  labels: string[];
+  data: number[];
+  title: string;
+};
+
+export const options = (title: string) => ({
   responsive: true,
   plugins: {
     legend: {
-      position: 'top' as const,
+      position: "top" as const,
     },
     title: {
       display: true,
-      text: 'Chart.js Line Chart',
+      text: title,
     },
   },
-};
+});
 
-const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
+export default function BarChart({ labels, data, title }: BarChartProps) {
+  const chartData = {
+    labels,
+    datasets: [
+      {
+        label: "Users",
+        data,
+        borderColor: "rgb(255, 99, 132)",
+        backgroundColor: "rgba(255, 99, 132, 0.3)",
+      },
+    ],
+  };
 
-export const data = {
-  labels,
-  datasets: [
-    {
-      label: 'Dataset 1',
-      data: labels.map(() => faker.number.int({ min: -1000, max: 1000 })),
-      borderColor: 'rgb(255, 99, 132)',
-      backgroundColor: 'rgba(255, 99, 132, 0.5)',
-    },
-    {
-      label: 'Dataset 2',
-      data: labels.map(() => faker.number.int({ min: -1000, max: 1000 })),
-      borderColor: 'rgb(53, 162, 235)',
-      backgroundColor: 'rgba(53, 162, 235, 0.5)',
-    },
-  ],
-};
-
-export default function BarChart() {
-  return <Line options={options} data={data} />;
+  return <Line options={options(title)} data={chartData} />;
 }
