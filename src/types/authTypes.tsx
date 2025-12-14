@@ -1,5 +1,7 @@
+import type { UserProfile } from "./usersTypes";
+
 export interface AuthContextType {
-  user: User | null;
+  user: UserProfile | null;
   loading: boolean;
   logout: () => Promise<void>;
 }
