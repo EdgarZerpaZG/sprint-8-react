@@ -10,6 +10,8 @@ export interface UserProfile {
   location: string;
   hobby: string;
   is_active?: boolean;
+  lat?: number | null;
+  lng?: number | null;
 }
 
 export type UserProfileCreateInput = Omit<

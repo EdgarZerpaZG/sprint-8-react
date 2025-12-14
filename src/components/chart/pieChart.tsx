@@ -17,8 +17,8 @@ export function PieChart({ labels, data, title }: PieChartProps) {
         label: "Users",
         data,
         backgroundColor: [
-          "rgba(34, 197, 94, 0.4)", // verde
-          "rgba(148, 163, 184, 0.4)", // gris
+          "rgba(34, 197, 94, 0.4)", // green
+          "rgba(148, 163, 184, 0.4)", // gray
         ],
         borderColor: [
           "rgba(34, 197, 94, 1)",

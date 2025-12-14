@@ -21,6 +21,7 @@ describe("BookingModal", () => {
     start: "2025-01-20T10:00:00",
     end: "2025-01-20T11:00:00",
     resource: "roomA",
+    profileId: null as string | null,
   };
 
   beforeEach(() => {
@@ -37,8 +38,12 @@ describe("BookingModal", () => {
       error: null,
     });
 
-    const mockSelectFn = vi.fn().mockResolvedValue({ data: [], error: null });
-    const mockInsertFn = vi.fn().mockReturnValue({ select: mockSelectFn });
+    const mockSelectFn = vi
+      .fn()
+      .mockResolvedValue({ data: [], error: null });
+    const mockInsertFn = vi.fn().mockReturnValue({
+      select: mockSelectFn,
+    });
 
     (supabase.from as any).mockReturnValue({
       insert: mockInsertFn,
@@ -46,14 +51,24 @@ describe("BookingModal", () => {
 
     render(<BookingModal {...defaultProps} />);
 
-    fireEvent.change(screen.getByPlaceholderText("Event or Title"), {
-      target: { value: "Test Meeting" },
-    });
+    fireEvent.change(
+      screen.getByPlaceholderText(/First consultation/i),
+      {
+        target: { value: "Test Meeting" },
+      }
+    );
 
     fireEvent.click(screen.getByRole("button", { name: /book/i }));
 
     await waitFor(() => {
       expect(mockInsertFn).toHaveBeenCalled();
+    });
+
+    const firstCall = mockInsertFn.mock.calls[0][0][0];
+    expect(firstCall).toMatchObject({
+      resource: defaultProps.resource,
+      title: "Test Meeting",
+      profile_id: null,
     });
 
     expect(defaultProps.onSuccess).toHaveBeenCalled();
@@ -72,13 +87,18 @@ describe("BookingModal", () => {
 
     render(<BookingModal {...defaultProps} />);
 
-    fireEvent.change(screen.getByPlaceholderText("Event or Title"), {
-      target: { value: "Meeting" },
-    });
+    fireEvent.change(
+      screen.getByPlaceholderText(/First consultation/i),
+      {
+        target: { value: "Meeting" },
+      }
+    );
 
     fireEvent.click(screen.getByRole("button", { name: /book/i }));
 
-    const errorMsg = await screen.findByText(/ya está ocupado/i);
+    const errorMsg = await screen.findByText(
+      /selected time slot is already taken/i
+    );
     expect(errorMsg).toBeInTheDocument();
   });
 
@@ -89,13 +109,18 @@ describe("BookingModal", () => {
 
     render(<BookingModal {...defaultProps} />);
 
-    fireEvent.change(screen.getByPlaceholderText("Event or Title"), {
-      target: { value: "Meeting" },
-    });
+    fireEvent.change(
+      screen.getByPlaceholderText(/First consultation/i),
+      {
+        target: { value: "Meeting" },
+      }
+    );
 
     fireEvent.click(screen.getByRole("button", { name: /book/i }));
 
-    const errorMsg = await screen.findByText(/Debes iniciar sesión/i);
+    const errorMsg = await screen.findByText(
+      /must be logged in to manage bookings/i
+    );
     expect(errorMsg).toBeInTheDocument();
   });
 
@@ -139,11 +164,16 @@ describe("BookingModal", () => {
       />
     );
 
-    fireEvent.change(screen.getByPlaceholderText("Event or Title"), {
-      target: { value: "Updated Meeting" },
-    });
+    fireEvent.change(
+      screen.getByPlaceholderText(/First consultation/i),
+      {
+        target: { value: "Updated Meeting" },
+      }
+    );
 
-    fireEvent.click(screen.getByRole("button", { name: /save changes/i }));
+    fireEvent.click(
+      screen.getByRole("button", { name: /save changes/i })
+    );
 
     await waitFor(() => {
       expect(mockUpdateFn).toHaveBeenCalled();
@@ -155,19 +185,17 @@ describe("BookingModal", () => {
   });
 
   it("should delete a booking when delete button is clicked", async () => {
-    const confirmSpy = vi.spyOn(window, "confirm").mockReturnValue(true);
+    const confirmSpy = vi
+      .spyOn(window, "confirm")
+      .mockReturnValue(true);
 
     const onClose = vi.fn();
     const onSuccess = vi.fn();
 
     const mockEqFn = vi.fn().mockReturnThis();
-
-    const deleteQuery = {
+    const mockDeleteFn = vi.fn().mockReturnValue({
       eq: mockEqFn,
-      then: (resolve: any) => resolve({ data: null, error: null }),
-    };
-
-    const mockDeleteFn = vi.fn().mockReturnValue(deleteQuery);
+    });
 
     (supabase.from as any).mockReturnValue({
       delete: mockDeleteFn,

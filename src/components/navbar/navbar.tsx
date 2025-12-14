@@ -4,6 +4,7 @@ import '../../App.css';
 import Vite from "../../assets/vite.svg";
 
 export default function Navbar() {
+
   return (
     <>
       <nav className="navbar fixed w-full bg-black z-10">
@@ -15,10 +16,8 @@ export default function Navbar() {
         </div>
         <div className="flex justify-center items-center uppercase">
           <Link className="px-4 py-2 mx-2 text-white hover:text-gray-500" to="/">Home</Link>
-          <Link className="px-4 py-2 mx-2 text-white hover:text-gray-500" to="/users">Users</Link>
           <Link className="px-4 py-2 mx-2 text-white hover:text-gray-500" to="/map">Map</Link>
           <Link className="px-4 py-2 mx-2 text-white hover:text-gray-500" to="/calendar">Calendar</Link>
-          <Link className="px-4 py-2 mx-2 text-white hover:text-gray-500" to="/graphics">Graphics</Link>
         </div>
       </nav>
     </>
