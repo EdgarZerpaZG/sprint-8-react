@@ -1,24 +1,32 @@
-import LineChart from "../components/chart/lineChart";
-import BarChart from "../components/chart/barChart";
-import { PieChart } from "../components/chart/pieChart";
+import { useIsAdmin } from "../hooks/useIsAdmin";
+import AdminUsersMetrics from "../components/admin/AdminUsersMetrics";
 
-export default function Chart() {
+export default function Graphics() {
+  const { isAdmin, loadingAdmin } = useIsAdmin();
+
+  if (loadingAdmin) {
     return (
-        <>
-            <main className="h-full">
-                <section className="w-full my-5">
-                    <h2 className="text-center text-2xl font-bold mb-4">Line Chart</h2>
-                    <LineChart />
-                </section>
-                <section className="w-full my-5">
-                    <h2 className="text-center text-2xl font-bold mb-4">Bar Chart</h2>
-                    <BarChart />
-                </section>
-                <section className="w-full my-5">
-                    <h2 className="text-center text-2xl font-bold mb-4">Pie Chart</h2>
-                    <PieChart />
-                </section>
-            </main>
-        </>
-    )
+      <main className="h-full flex justify-center items-center">
+        <p className="text-gray-400">Checking permissions...</p>
+      </main>
+    );
+  }
+
+  if (!isAdmin) {
+    return (
+      <main className="h-full flex justify-center items-center">
+        <p className="text-gray-400">
+          You do not have permission to see user metrics.
+        </p>
+      </main>
+    );
+  }
+
+  return (
+    <main className="h-full flex justify-center items-start">
+      <section className="w-full max-w-6xl px-4">
+        <AdminUsersMetrics />
+      </section>
+    </main>
+  );
 }

@@ -1,9 +1,14 @@
-import { useState } from "react";
+import { useState, type ChangeEvent, type FormEvent } from "react";
 import { supabase } from "../lib/supabaseClient";
 
 type RegisterFormState = {
   username: string;
+  name: string;
+  lastname: string;
   email: string;
+  phone: string;
+  location: string;
+  hobby: string;
   password: string;
   confirmPassword: string;
 };
@@ -11,14 +16,20 @@ type RegisterFormState = {
 export function useRegisterForm(onSuccess?: () => void) {
   const [formData, setFormData] = useState<RegisterFormState>({
     username: "",
+    name: "",
+    lastname: "",
     email: "",
+    phone: "",
+    location: "",
+    hobby: "",
     password: "",
     confirmPassword: "",
   });
+
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
     setFormData((prev) => ({
@@ -27,14 +38,33 @@ export function useRegisterForm(onSuccess?: () => void) {
     }));
   };
 
-  const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleRegister = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setMessage("");
     setLoading(true);
 
-    const { username, email, password, confirmPassword } = formData;
+    const {
+      username,
+      name,
+      lastname,
+      email,
+      phone,
+      location,
+      hobby,
+      password,
+      confirmPassword,
+    } = formData;
 
-    if (!username || !email || !password || !confirmPassword) {
+    if (
+      !username ||
+      !name ||
+      !lastname ||
+      !email ||
+      !location ||
+      !hobby ||
+      !password ||
+      !confirmPassword
+    ) {
       setMessage("All fields are required");
       setLoading(false);
       return;
@@ -46,10 +76,19 @@ export function useRegisterForm(onSuccess?: () => void) {
       return;
     }
 
+    const phoneNumber =
+      phone.trim().length > 0 ? Number(phone.trim()) : null;
+
+    if (phoneNumber !== null && Number.isNaN(phoneNumber)) {
+      setMessage("Phone must be a valid number");
+      setLoading(false);
+      return;
+    }
+
     try {
       const { data: existing, error: existingError } = await supabase
         .from("users")
-        .select("*")
+        .select("id, username, email")
         .or(`username.eq.${username},email.eq.${email}`);
 
       if (existingError) {
@@ -66,24 +105,39 @@ export function useRegisterForm(onSuccess?: () => void) {
         email,
         password,
         options: {
-          data: { username },
+          data: {
+            username,
+            name,
+            lastname,
+            phone: phone.trim(),
+            location,
+            hobby,
+          },
           emailRedirectTo: `${window.location.origin}/emailconfirmation`,
         },
       });
 
       if (error) throw error;
 
-      if (data?.user) {
-        const { error: insertError } = await supabase.from("users").insert([
+      if (data?.session?.user) {
+        const userId = data.session.user.id;
+
+        const { error: upsertError } = await supabase.from("users").upsert([
           {
-            id: data.user.id,
+            id: userId,
             username,
             email,
+            name,
+            lastname,
+            phone: phoneNumber,
+            location,
+            hobby,
+            is_active: true,
           },
         ]);
 
-        if (insertError) {
-          console.error("Error inserting user in table:", insertError);
+        if (upsertError) {
+          console.error("Error upserting user in table:", upsertError);
         }
       }
 

@@ -6,9 +6,8 @@ import {
   Title,
   Tooltip,
   Legend,
-} from 'chart.js';
-import { Bar } from 'react-chartjs-2';
-import { faker } from '@faker-js/faker';
+} from "chart.js";
+import { Bar } from "react-chartjs-2";
 
 ChartJS.register(
   CategoryScale,
@@ -19,41 +18,36 @@ ChartJS.register(
   Legend
 );
 
-export const options = {
+type LineChartProps = {
+  labels: string[];
+  data: number[];
+  title: string;
+};
+
+export const options = (title: string) => ({
   responsive: true,
   plugins: {
     legend: {
-      position: 'top' as const,
+      position: "top" as const,
     },
     title: {
       display: true,
-      text: 'Chart.js Bar Chart',
+      text: title,
     },
   },
-};
+});
 
-const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
+export default function LineChart({ labels, data, title }: LineChartProps) {
+  const chartData = {
+    labels,
+    datasets: [
+      {
+        label: "Users",
+        data,
+        backgroundColor: "rgba(53, 162, 235, 0.5)",
+      },
+    ],
+  };
 
-export const data = {
-  labels,
-  datasets: [
-    {
-      label: 'Dataset 1',
-      data: labels.map(() => faker.number.int({ min: 0, max: 1000 })),
-      backgroundColor: 'rgba(255, 99, 132, 0.5)',
-    },
-    {
-      label: 'Dataset 2',
-      data: labels.map(() => faker.number.int({ min: 0, max: 1000 })),
-      backgroundColor: 'rgba(53, 162, 235, 0.5)',
-    },
-  ],
-};
-
-export default function LineChart() {
-  return (
-    <>
-      <Bar options={options} data={data} />
-    </>
-  );
+  return <Bar options={options(title)} data={chartData} />;
 }

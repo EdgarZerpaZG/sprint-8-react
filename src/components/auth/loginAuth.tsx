@@ -8,7 +8,7 @@ export default function LoginForm() {
 
   const { formData, message, loading, handleChange, handleSubmit } =
     useLoginForm(() => {
-      setTimeout(home, 3000);
+      setTimeout(home, 2000);
     });
 
   return (
