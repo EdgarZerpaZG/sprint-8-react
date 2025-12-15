@@ -26,7 +26,6 @@ export default function RegisterForm() {
     <>
       <form onSubmit={handleRegister}>
         <div className="space-y-12">
-          {/* PROFILE */}
           <div className="border-b border-white/10 pb-12">
             <h2 className="text-base/7 font-semibold text-white">Profile</h2>
             <p className="mt-1 text-sm/6 text-gray-400">
@@ -61,10 +60,7 @@ export default function RegisterForm() {
               </div>
 
               <div className="sm:col-span-3">
-                <label
-                  htmlFor="name"
-                  className="block text-sm/6 font-medium text-white"
-                >
+                <label htmlFor="name" className="block text-sm/6 font-medium text-white">
                   Name
                 </label>
                 <div className="mt-2">
@@ -80,10 +76,7 @@ export default function RegisterForm() {
               </div>
 
               <div className="sm:col-span-3">
-                <label
-                  htmlFor="lastname"
-                  className="block text-sm/6 font-medium text-white"
-                >
+                <label htmlFor="lastname" className="block text-sm/6 font-medium text-white">
                   Lastname
                 </label>
                 <div className="mt-2">
@@ -100,7 +93,6 @@ export default function RegisterForm() {
             </div>
           </div>
 
-          {/* PERSONAL INFO */}
           <div className="border-b border-white/10 pb-12">
             <h2 className="text-base/7 font-semibold text-white">
               Personal Information
@@ -111,10 +103,7 @@ export default function RegisterForm() {
 
             <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
               <div className="sm:col-span-6">
-                <label
-                  htmlFor="email"
-                  className="block text-sm/6 font-medium text-white"
-                >
+                <label htmlFor="email" className="block text-sm/6 font-medium text-white">
                   Email address
                 </label>
                 <div className="mt-2">
@@ -131,10 +120,7 @@ export default function RegisterForm() {
               </div>
 
               <div className="sm:col-span-3">
-                <label
-                  htmlFor="phone"
-                  className="block text-sm/6 font-medium text-white"
-                >
+                <label htmlFor="phone" className="block text-sm/6 font-medium text-white">
                   Phone
                 </label>
                 <div className="mt-2">
@@ -151,10 +137,7 @@ export default function RegisterForm() {
               </div>
 
               <div className="sm:col-span-3">
-                <label
-                  htmlFor="location"
-                  className="block text-sm/6 font-medium text-white"
-                >
+                <label htmlFor="location" className="block text-sm/6 font-medium text-white">
                   Location
                 </label>
                 <div className="mt-2">
@@ -171,10 +154,7 @@ export default function RegisterForm() {
               </div>
 
               <div className="sm:col-span-6">
-                <label
-                  htmlFor="hobby"
-                  className="block text-sm/6 font-medium text-white"
-                >
+                <label htmlFor="hobby" className="block text-sm/6 font-medium text-white">
                   Hobby
                 </label>
                 <div className="mt-2">
@@ -191,10 +171,7 @@ export default function RegisterForm() {
               </div>
 
               <div className="sm:col-span-3">
-                <label
-                  htmlFor="password"
-                  className="block text-sm/6 font-medium text-white"
-                >
+                <label htmlFor="password" className="block text-sm/6 font-medium text-white">
                   Password
                 </label>
                 <div className="mt-2">
@@ -211,10 +188,7 @@ export default function RegisterForm() {
               </div>
 
               <div className="sm:col-span-3">
-                <label
-                  htmlFor="confirmPassword"
-                  className="block text-sm/6 font-medium text-white"
-                >
+                <label htmlFor="confirmPassword" className="block text-sm/6 font-medium text-white">
                   Confirm password
                 </label>
                 <div className="mt-2">
@@ -233,18 +207,10 @@ export default function RegisterForm() {
         </div>
 
         <div className="mt-6 flex items-center justify-end gap-x-6">
-          <button
-            type="button"
-            onClick={home}
-            className="text-sm/6 font-semibold text-white hover:text-gray-500 cursor-pointer"
-          >
+          <button type="button" onClick={home} className="text-sm/6 font-semibold text-white hover:text-gray-500 cursor-pointer">
             Cancel
           </button>
-          <button
-            type="submit"
-            disabled={loading}
-            className="rounded-md bg-indigo-500 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-600 cursor-pointer disabled:opacity-50"
-          >
+          <button type="submit" disabled={loading} className="rounded-md bg-indigo-500 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-600 cursor-pointer disabled:opacity-50">
             {loading ? "Registering..." : "Register"}
           </button>
         </div>

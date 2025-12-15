@@ -3,7 +3,6 @@ import { DateTime } from "luxon";
 import type {
   DateSelectArg,
   EventClickArg,
-  EventDropArg,
 } from "@fullcalendar/core";
 import { useBookings } from "./useBooking";
 import { supabase } from "../lib/supabaseClient";

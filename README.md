@@ -6,7 +6,7 @@ This project is a **React (Vite) application** focused on learning how to connec
 
 It includes:
 
-- A **User admin panel (CRUD)** connected to **MongoDB**.
+- A **User admin panel (CRUD)** connected to **Supabase**.
 - A **booking calendar** powered by **FullCalendar** with data stored and validated in **Supabase**.
 - Integration with **Google Maps JavaScript API** (from Google Cloud) to display location data.
 - Several **charts with Chart.js** to visualise data from the app.
@@ -17,7 +17,7 @@ It includes:
 
 The main goals of this sprint are:
 
-- Understand how to use **different data sources** (MongoDB, Supabase, Google Maps API) in a React app.
+- Understand how to use **different data sources** (Supabase, Google Maps API) in a React app.
 - Gain hands-on experience with a **modern frontend stack** and **real databases**.
 - Learn how to handle **dynamic data**, maps, and user sessions in a single dashboard.
 - Practice **automated testing** of components and main flows with Vitest + React Testing Library.
@@ -26,16 +26,12 @@ The main goals of this sprint are:
 
 ## 🧠 Key Features
 
-### 👤 User Management (MongoDB)
+### 👤 User Management
 
-- **User CRUD** (Create, Read, Update, Delete) using a Node/Express backend and **MongoDB**.
-- `UserForm` component:
-  - Used both for creating and editing a user.
-  - Controlled inputs for `username`, `name`, `lastname`, `email`, `location`.
+- **User CRUD** (Create, Read, Update, Delete) using **Supabase**.
 - `UserTable` component:
-  - Displays all users from MongoDB.
-  - Buttons to **Edit** (pre-filling the form) and **Delete** users.
-- The backend connects to MongoDB using a connection string (`MONGO_URI`) and database name (`MONGO_DB_NAME`).
+  - Displays all users from Supabase.
+  - Buttons to **Edit**, **Delete** and **Active** users.
 
 ### 📅 Bookings Calendar (Supabase + FullCalendar)
 
@@ -44,10 +40,10 @@ The main goals of this sprint are:
   - `user_id` (Supabase Auth user)
   - `resource` (e.g. `consultorio-A`)
   - `start_time` / `end_time`
-- Data storage and realtime notifications managed by **Supabase** (Postgres + Realtime). :contentReference[oaicite:1]{index=1}  
+- Data storage and realtime notifications managed by **Supabase** (Postgres + Realtime).  
 - A PostgreSQL function `is_available` checks if a time slot is free before creating or updating a booking.
 - **Booking modal**:
-  - Create, edit and delete bookings.
+  - Create, edit, delete and move bookings.
   - Shows clear error messages when the time slot is already taken or the user is not logged in.
 
 ### 🗺️ Google Maps Integration (Google Cloud)
@@ -58,13 +54,13 @@ The main goals of this sprint are:
 
 ### 📊 Charts & Data Visualisation (Chart.js)
 
-- Visualisation of key metrics using **Chart.js**, integrated with React. 
+- Visualisation of key metrics using **Chart.js** from users status. 
 
 ### 🔐 Authentication & Storage (Supabase)
 
-- User registration and login handled with **Supabase Auth**. :contentReference[oaicite:4]{index=4}  
+- User registration and login handled with **Supabase Auth**.  
 - Bookings are linked to the authenticated user via `user_id`.
-- Supabase Storage can be used to store and serve user images or other files. :contentReference[oaicite:5]{index=5}  
+- Supabase Storage can be used to store and serve user images or other files.  
 
 ---
 
@@ -73,7 +69,6 @@ The main goals of this sprint are:
 - ⚛️ **React** (Vite)
 - 🧩 **TypeScript**
 - 💅 **Tailwind CSS** for styling
-- 💾 **MongoDB** for User CRUD (Node/Express backend)
 - 💾 **Supabase**
   - Auth
   - Database (PostgreSQL)
@@ -106,21 +101,6 @@ npm run dev
 
 4. Open the localhost url:
 - Example: http://localhost:5173/
-
-
-5. Navigate to the backend directory:
-```
-sprint-8-react/ cd backend
-```
-
-6. Run in the terminal:
-```
-npm install
-npm run dev
-```
-
-7. Open the localhost url:
-- Example: http://localhost:4000/
 
 5. Additional feature with Testing(Vitest and React Testing), open the terminal and run:
 ```

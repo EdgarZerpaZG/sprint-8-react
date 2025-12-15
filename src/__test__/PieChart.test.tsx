@@ -41,6 +41,6 @@ describe("PieChart", () => {
 
     expect(parsed.labels).toEqual(labels);
     expect(parsed.data).toEqual(data);
-    expect(parsed.title).toBe(""); // sin título
+    expect(parsed.title).toBe("");
   });
 });

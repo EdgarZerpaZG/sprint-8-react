@@ -40,7 +40,7 @@ export default function GoogleMapComponent() {
   const [showCafes, setShowCafes] = useState(false);
   const [showMalls, setShowMalls] = useState(false);
   const [showParks, setShowParks] = useState(false);
-  const [showHobbyPlaces, setShowHobbyPlaces] = useState(true); // default ON
+  const [showHobbyPlaces, setShowHobbyPlaces] = useState(true);
 
   const [loadingPlaces, setLoadingPlaces] = useState(false);
   const [placesError, setPlacesError] = useState<string | null>(null);
@@ -64,7 +64,6 @@ export default function GoogleMapComponent() {
     });
   }, [isLoaded, coords, temperature]);
 
-  // Draw / clear user markers (from user_profiles)
   useEffect(() => {
     if (!mapInstance.current) return;
 

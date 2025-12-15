@@ -75,7 +75,6 @@ export default function ProfileModal({
       return;
     }
 
-    // phone puede venir null o número
     if (form.phone !== null && Number.isNaN(Number(form.phone))) {
       setLocalError("Phone must be a valid number.");
       return;

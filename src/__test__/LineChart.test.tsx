@@ -1,9 +1,7 @@
-// tests/LineChart.test.tsx
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import LineChart from "../components/chart/lineChart";
 
-// Mock react-chartjs-2 to inspect props
 vi.mock("react-chartjs-2", () => ({
   Bar: (props: any) => (
     <div data-testid="bar-chart">

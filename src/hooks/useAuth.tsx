@@ -40,7 +40,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .maybeSingle();
 
     if (error) {
-      // No bloquees nada por esto
       console.warn("Hydrate profile error:", error.message);
       return;
     }
@@ -62,11 +61,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const sessionUser = data?.session?.user;
 
         if (sessionUser && alive) {
-          // 1) Set inmediato desde metadata
           const base = mapFromSession(sessionUser);
           setUser(base);
 
-          // 2) Hidratación sin bloquear
           hydrateFromTable(sessionUser.id);
         } else if (alive) {
           setUser(null);
@@ -83,10 +80,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const sessionUser = session?.user;
 
         if (sessionUser) {
-          // 1) Set inmediato
           setUser(mapFromSession(sessionUser));
 
-          // 2) Hidratación async
           hydrateFromTable(sessionUser.id);
         } else {
           setUser(null);

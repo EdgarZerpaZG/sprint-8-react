@@ -67,7 +67,6 @@ export function useBookingModal({
         throw new Error("Invalid dates.");
       }
 
-      // 1) User authenticated
       const {
         data: { session },
       } = await supabase.auth.getSession();
@@ -78,7 +77,6 @@ export function useBookingModal({
 
       const userId = session.user.id;
 
-      // 2) Validate availability via RPC
       const { data: available, error: rpcErr } = await supabase.rpc(
         "is_available",
         {
@@ -102,7 +100,6 @@ export function useBookingModal({
       }
 
       if (mode === "create") {
-        // 3A) Insert
         const { data: insertedRows, error: insertErr } = await supabase
           .from("bookings")
           .insert([
@@ -121,7 +118,6 @@ export function useBookingModal({
 
         if (insertErr) throw insertErr;
       } else {
-        // 3B) Update
         if (!bookingId) {
           throw new Error("Missing booking ID to edit.");
         }
