@@ -106,6 +106,3 @@ npm run dev
 ```
 sprint-8-react/ npm run test
 ```
-```
-backend/ npm run test
-```
